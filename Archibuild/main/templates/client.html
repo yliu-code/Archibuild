@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/bootstrap/css/bootstrap.min.css">
+
+    <script type="text/javascript" src="/assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="/assets/vendor/paper/paper-full.min.js"></script>
+
+    <title>Testing</title>
+</head>
+<body>
+
+    <div id="outer">
+
+    </div>
+
+    <!--<img src="/assets/screen.png" width=500 height="600"> -->
+
+    <script type="text/javascript">
+
+        var loaded = false;
+        window.onload = function() {
+            //socket.send("Try ME")
+            setInterval(function(){
+                if(loaded){
+                    socket.send("Alive");
+                }
+            }, 3000);
+        }
+
+        var socket = new WebSocket('ws://final160-alexanderpark.codeanyapp.com:2323/aserver');
+        socket.onopen = function() {
+            loaded = true;
+            this.send("TryMe");
+        };
+
+        socket.onmessage = function(receivedMessage) {
+
+            $( "body" ).append( receivedMessage.data );
+        }
+
+        socket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        }
+
+
+    </script>
+
+</body>
+</html>

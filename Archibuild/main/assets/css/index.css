@@ -1,0 +1,82 @@
+html, body
+{
+    height: 100%;
+    min-height: 100%;
+    max-height:100%;
+    outline:none
+}
+
+body
+{
+    margin: 0;
+    background: url("/assets/imgs/indexBack.jpg");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    border: 1px solid transparent;
+}
+
+#welcomeText{
+    font-size: 6vw;
+    color:white;
+    -webkit-user-select: none;
+    text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;
+    text-align: center;
+    margin-top:50px;
+
+}
+
+#internalText{
+    margin-top:4%;
+    
+    font-size: 4.3vw;
+    color:white;
+    text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;
+    -webkit-user-select: none;
+
+}
+
+#orText{
+    font-size: 4.3vw;
+    color:white;
+    text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;
+    -webkit-user-select: none;
+    
+}
+
+.vertical{
+   padding-bottom:25px;
+   font-size: 4.3vw;
+    color:white;
+    text-shadow: 1px 1px 2px black, 0 0 25px blue, 0 0 5px darkblue;
+    -webkit-user-select: none;
+}
+
+#innerContainer{
+    margin-top: 50px;
+    display: flex;
+    align-items: center;
+
+}
+
+#cButton {
+
+    width:80%;
+    padding:5px;
+
+    -webkit-border-radius: 50px;
+    font-size: 50px;
+    border-width:5px;
+    border-style: solid;
+    border-color: #ffffff;
+    color:white;
+    background-color: #020a01e0;
+    outline:none;
+    transition:0.3s;
+
+}
+
+#cButton:hover{
+    background-color: #fff;
+    color: #000;
+    border-color:#ffffffff;
+}

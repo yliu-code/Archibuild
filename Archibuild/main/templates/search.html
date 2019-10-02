@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search for Architects</title>
+
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/search.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+    <script type="text/javascript" src="/assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+
+    <link rel="stylesheet" href="/assets/vendor/jquery-ui/jquery-ui.css">
+
+    <script type="text/javascript" src="/assets/vendor/jquery-ui/jquery-ui.js"></script>
+    <script type="text/javascript" src="/assets/vendor/paper/paper-full.min.js"></script>
+</head>
+<body>
+
+<div id="contentPane" class="container">
+
+   
+    <!--<textarea rows="1" cols="30" id="searchbar" maxlength="30" placeholder="Search..."></textarea>-->
+    
+
+   
+</div>
+  
+  
+<script>
+      prevQuery = ""
+      fadeInOrNot = true;
+      $introSegment = $("<div id='infoText'>Find The Right Architect For You</div>")
+      $introSegment.hide()
+
+      $searchBar = $('<input type="text" id="searchbar" maxlength="30" placeholder="Search...">')
+      $searchBar.hide()
+
+      $archPane = $('<div id="archPane"></div>')
+
+
+      $("#contentPane").append($introSegment)
+      $("#contentPane").append($searchBar)
+      $("#contentPane").append($archPane)
+
+
+      function archClass(architectQuery){
+          $archDiv = $("<div class=\"prof\"> </div>")
+
+          $archDiv.append("<img class=\"profilePic\"src="+architectQuery.path+">")
+
+          $archDiv.append("<div>"+architectQuery.name+"</div>")
+
+
+          for(var i=0;i<architectQuery.stars;i++){
+              $archDiv.append("<span class=\"fa fa-star checked\"</span>")
+          }
+
+          for(var i=0;i<5-architectQuery.stars;i++){
+              $archDiv.append("<span class=\"fa fa-star\"</span>")
+          }
+          $archDiv.append("<div>Comments</div>")
+
+
+          $archDiv.on("click", function(){
+              location.href = '/requestForm?architect='+architectQuery.name;
+          })
+          //$archDiv.hide()
+          return $archDiv
+
+      }
+
+      window.onload = function () {
+
+          $introSegment.fadeIn(2000);
+          //$introSegment.show("slide", { direction: "left" }, 1000);
+
+          $searchBar.slideDown(1000)
+
+          setInterval(function(){
+              $introSegment.fadeOut(2000, function(){
+                  if(fadeInOrNot){
+
+                      $introSegment.html("Made Fast and Simple");
+                  }else{
+                      $introSegment.html("Find The Right Architect For You")
+                  }
+                  fadeInOrNot = !fadeInOrNot
+              });
+              $introSegment.fadeIn(2000);
+
+
+
+          }, 4500);
+      }
+      $("#searchbar").on('input', function() {
+          if($("#searchbar").val()==""){
+              $("#archPane").html("")
+              return
+          }
+
+          connection = new WebSocket('ws://final160-alexanderpark.codeanyapp.com:2323/lookup');
+          connection.onmessage = function(receivedMessage) {
+
+              this.send("<Finished>")
+
+              content = receivedMessage.data
+              console.log("Received "+content)
+              if(content==""){
+                  $("#archPane").html("")
+                  return
+              }
+              if(content=="null"){
+                  $("#archPane").html("<div id=\"noResultsText\">No Results Found</div>")
+                  return
+              }
+
+
+              $("#archPane").html("")
+              queries = content.split("</Delim>")
+              for(q of queries){
+                  if(q==""){
+                      continue;
+                  }
+                  //console.log((JSON.parse(q))["name"])
+                  $("#archPane").append(archClass(JSON.parse(q)))
+              }
+
+
+
+          };
+          connection.onopen = function(){
+              this.send($("#searchbar").val())
+
+          };
+
+
+      });
+
+
+  
+  
+</script>
+
+</body>
+</html>

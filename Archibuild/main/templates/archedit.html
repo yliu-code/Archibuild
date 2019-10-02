@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/archedit.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script type="text/javascript" src="/assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="/assets/vendor/jquery-ui/jquery-ui.css">
+    <script type="text/javascript" src="/assets/vendor/jquery-ui/jquery-ui.js"></script>
+    <script type="text/javascript" src="/assets/vendor/paper/paper-full.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <title>Edit</title>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div class="overall">
+        <div class="rightbar">
+            <div class="tools">
+                <button onclick="addRectangle(this, '008-table')">
+                    Add Table
+                </button>
+                <button onclick="addRectangle(this, '014-toilet')">
+                    Add Toilet
+                </button>
+                <button onclick="addRectangle(this, '011-tv-table')">
+                    Add TV
+                </button>
+                <button onclick="addRectangle(this, '001-sofa')">
+                    Add Sofa
+                </button>
+                <button onclick="addRectangle(this, '025-bed')">
+                    Add Bed
+                </button>
+            </div>
+            <div class="textures">
+            </div>
+        </div>
+        <div class="designBoard">
+            <ul>
+                <li class="bed"> Bedroom</li>
+                <li class="live">Living Room</li>
+                <li class="kitchen">Kitchen</li>
+            </ul>
+            <div id="bed" class="tab"></div>
+            <div id="live" class="tab"></div>
+            <div id="kitchen" class="tab"></div>
+        </div>
+        <div class="chatbox">
+            <div class="adjust">
+                <div id="setting-text">
+                    Settings
+                </div>
+                <input type="range" min="0" max="200" value="100" class="slider" id="scaling">
+                <p class="input-text">Value: <span id="scale"></span> %</p>
+                <input type="range" min="-180" max="180" value="0" class="slider" id="rotating">
+                <p class="input-text">Value: <span id="rotate"></span></p>
+                <div id="setting-button">
+                    <button class="setting-buttons" id="deselect-button" onclick="deselect()">
+                        Deselect
+                    </button>
+                    <button class="setting-buttons" id="delete-button" onclick="deleteObject()">
+                        Delete
+                    </button>
+                </div>
+            </div>
+            <div class="chat">
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    /*
+          var connectionMade = false;
+          setInterval(func(){
+              if(connectionMade){
+                  connection.send(JSON.stringify({content:"</Alive>"}));
+              }
+          },1000)
+
+          var connection = new WebSocket('ws://final160-alexanderpark.codeanyapp.com:2323/commun');
+                connection.onopen = function(){
+                     connectionMade=true;
+                     connection.send(JSON.stringify({content:"server"}));
+                }
+           connection.onmessage = function(receivedMessage){
+                  let packet = JSON.parse(receivedMessage.data)
+                  //packet["text"]
+                  $("#viewAll").append(packet["text"])
+           }
+
+          * */
+
+    var currentDiv = "bed";
+    var highlight = "#35AEDD"
+    var unhightlight = "#542344"
+    var hovercolor = "#111"
+    $(".bed").css("background-color", highlight);
+    $("#bed").prepend("<img id = 'bed-room' src = '/assets/imgs/floorplans/Bedroom.svg' width = '800px' height = '800px'/>");
+    $("#live").prepend("<img id = 'living-room' src = '/assets/imgs/floorplans/Kitchen.svg' width = '800px' height = '800px'/>");
+    $("#kitchen").prepend("<img id = 'kitch-room' src = '/assets/imgs/floorplans/LivingRoom.svg' width = '800px' height = '800px'/>");
+    $(".designBoard>.tab").css("visibility", "hidden");
+    $("#bed").css("visibility", "visible");
+
+    $("ul>li").click(function() {
+        $("." + currentDiv).css("background-color", "");
+        $(this).css("background-color", highlight);
+        $(".designBoard>.tab").css("visibility", "hidden");
+        $("#" + this.className).css("visibility", "visible");
+        currentDiv = this.className;
+    });
+    // In case we want "undo" and "redo."
+    //item_properties = []
+    // TODO: handle the case when newly created rectangles overlap
+    // Manually create an element in div designBoard
+    function addRectangle(elem, item) {
+        //console.log("adding rectanbles...")
+        // let furnitureDiv = document.createElement("div")
+        // furnitureDiv.id = Math.random()
+        // furnitureDiv.style.position = "absolute"
+        // furnitureDiv.style.width = "250px"
+        // furnitureDiv.style.height = "250px"
+        // furnitureDiv.src = "https://image.shutterstock.com/image-photo/white-transparent-leaf-on-mirror-260nw-1029171697.jpg"
+        // furnitureDiv.textContent = " " // Without this the div will have height 0, i.e., disappear
+        // // Right-click to remove itself
+
+        var img = new Image(250, 250);
+        img.style.position = "absolute";
+        img.src = "/assets/icons/lineral/" + item + ".svg";
+
+        img.oncontextmenu = function(e) {
+            //         e.preventDefault();
+            //         this.parentNode.removeChild(this) 
+            e.preventDefault();
+            if (rightclickedobject != null) {
+                rightclickedobject.style.outline = "none";
+            }
+            rightclickedobject = this;
+            rightclickedobject.style.outline = "5px solid red";
+            console.log(this);
+
+        }
+        document.getElementById(currentDiv).appendChild(img);
+
+        if (rightclickedobject != null) {
+            rightclickedobject.style.outline = "none";
+        }
+        rightclickedobject = img;
+        rightclickedobject.style.outline = "5px solid red";
+        makeDraggable(img);
+    }
+
+    function makeDraggable(elmnt) {
+        var pos1 = 0,
+            pos2 = 0,
+            pos3 = 0,
+            pos4 = 0;
+        elmnt.onmousedown = dragMouseDown;
+
+        function dragMouseDown(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // get the mouse cursor position at startup:
+
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            document.onmouseup = closeDragElement;
+            // call a function whenever the cursor moves:
+            document.onmousemove = elementDrag;
+            if (rightclickedobject != null) {
+                rightclickedobject.style.outline = "none";
+            }
+            rightclickedobject = elmnt;
+            rightclickedobject.style.outline = "5px solid red";
+        }
+
+        function elementDrag(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // calculate the new cursor position:
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            // set the element's new position:
+            elmnt.style.top = bounds(elmnt.offsetTop - pos2, 0, bounds(document.getElementById(currentDiv).clientHeight) - elmnt.clientHeight) + "px";
+            elmnt.style.left = bounds(elmnt.offsetLeft - pos1, 0, bounds(document.getElementById(currentDiv).clientWidth) - elmnt.clientWidth) + "px";
+        }
+
+        function bounds(number, lowerlimit, upperlimit) {
+            if (number > upperlimit) {
+                return upperlimit;
+            } else if (number < lowerlimit) {
+                return lowerlimit;
+            } else {
+                return number;
+            }
+        }
+
+        function closeDragElement() {
+            /* stop moving when mouse button is released:*/
+            document.onmouseup = null;
+            document.onmousemove = null;
+
+            /**
+             var bedPNG = document.getElementById("bed");
+             var bathPNG = document.getElementById("bath");
+             var livePNG = document.getElementById("live");
+             var kitchenPNG = document.getElementById("kitchen");
+
+             let strings=""
+             strings+=bedPNG.toDataURL("image/png", 1.0).replace("image/png", "image/octet-stream")+",";
+             strings+=bathPNG.toDataURL("image/png", 1.0).replace("image/png", "image/octet-stream")+",";;
+             strings+=livePNG.toDataURL("image/png", 1.0).replace("image/png", "image/octet-stream")+",";;
+             strings+=kitchenPNG.toDataURL("image/png", 1.0).replace("image/png", "image/octet-stream");;
+
+             var packet = {content:strings}
+             connection.send(packet)
+
+             **/
+
+        }
+    }
+
+    function randomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    var rightclickedobject = null;
+
+    var slider = document.getElementById("scaling");
+    var output = document.getElementById("scale");
+    output.innerHTML = slider.value;
+    var originaldimensen = 250;
+    slider.oninput = function() {
+        output.innerHTML = this.value;
+        rightclickedobject.width = originaldimensen * (this.value / 100);
+        rightclickedobject.height = originaldimensen * (this.value / 100);
+        console.log(rightclickedobject.width);
+
+    }
+
+    var slider1 = document.getElementById("rotating");
+    var output1 = document.getElementById("rotate");
+    output1.innerHTML = slider1.value;
+    slider1.oninput = function() {
+        rightclickedobject.style.transform = "rotate(" + this.value + "deg)";
+        output1.innerHTML = this.value;
+    }
+
+
+
+    function deselect() {
+        if (rightclickedobject != null) {
+            rightclickedobject.style.outline = "none";
+        }
+    }
+
+    function deleteObject() {
+        if (rightclickedobject != null) {
+            rightclickedobject.parentNode.removeChild(rightclickedobject);
+        }
+    }
+</script>
+
+</html>

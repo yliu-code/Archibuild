@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" type="text/css" href="/assets/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/requestForm.css">
+
+    <script type="text/javascript" src="/assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="/assets/vendor/paper/paper-full.min.js"></script>
+
+    <title>Request Form</title>
+</head>
+<body>
+
+
+
+        <div class="container" id="searchContainer">
+            <span id="titleLabel">Send {{.}} Your Profile And Dream:</span>
+            <div class="row" id="rowContainer">
+                <div class="col-md-2">
+                    <span id="nameLabel">Name</span>
+                </div>
+                <div class="col-md-10">
+                    <input type="text" class="fieldText" id="name">
+                </div>
+            </div>
+
+            <div class="row" id="rowContainer">
+                <div class="col-md-2">
+                    <span id="nameLabel">Approximate Budget</span>
+                </div>
+                <div class="col-md-10">
+                    <input type="text" min="1" step="any" class="fieldText" id="budget">
+                </div>
+            </div>
+
+
+            <div class="row" id="rowContainer">
+                <div class="col-md-2">
+                    <span id="nameLabel">Area in Square feet</span>
+                </div>
+                <div class="col-md-10">
+                    <input type="text" class="fieldText" id="sqft">
+                </div>
+            </div>
+
+            <div class="row" id="rowContainer">
+                <div class="col-md-2">
+                    <span id="nameLabel">Location</span>
+                </div>
+                <div class="col-md-10">
+                    <input type="text" class="fieldText" id="location">
+                </div>
+            </div>
+
+            <div class="row" id="rowPreferences">
+                <span id="nameLabel">Preferences</span>
+            </div>
+
+            <div class="row" id="rowContainer">
+                <textarea class="fieldPreferences" placeholder="Anything specific you want {{.}} to know?" id="preferences"></textarea>
+            </div>
+
+
+
+        </div>
+        <input type="submit" id="submitButton" value="Submit">
+
+
+
+        <script>
+            $("#submitButton").on("click", function(){
+                connection = new WebSocket('ws://final160-alexanderpark.codeanyapp.com:2323/sendPreferences');
+                connection.onopen = function(){
+                    console.log($("#budget").val())
+                    packet = JSON.stringify({name:$("#name").val(), budget:$("#budget").val(), area:$("#sqft").val(), location:$("#location").val(), preferences:$("#preferences").val()
+                        , architect:"{{.}}"})
+                    connection.send(packet)
+                }
+
+                connection.onmessage = function(receivedmessage){
+                    newURl = receivedmessage.data
+                    connection.send("<Finished>")
+                    connection.close()
+                    location.href = newURl;
+                }
+            })
+
+        </script>
+
+
+</body>
+</html>
